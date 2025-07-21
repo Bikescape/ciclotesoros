@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🗺️ Búsqueda del Tesoro</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #FF6B6B;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        
+        .app-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin: 20px 0;
+            transition: transform 0.3s ease;
+        }
+        
+        .app-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .app-icon {
+            font-size: 3em;
+            color: #4ECDC4;
+            margin-bottom: 15px;
+        }
+        
+        .btn {
+            background: #FF6B6B;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #E74C3C;
+        }
+        
+        .secondary-btn {
+            background: #4ECDC4;
+        }
+        
+        .secondary-btn:hover {
+            background: #2AAFA9;
+        }
+        
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .feature {
+            flex: 1 1 200px;
+            padding: 15px;
+            margin: 10px;
+            background: rgba(255,255,255,0.8);
+            border-radius: 10px;
+        }
+        
+        footer {
+            margin-top: 40px;
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎲 Búsqueda del Tesoro</h1>
+        <p>¡Crea y juega tus propios juegos de búsqueda del tesoro con geolocalización!</p>
+        
+        <div class="app-card">
+            <div class="app-icon">
+                <i class="fas fa-paint-brush"></i>
+            </div>
+            <h2>Diseñador de Juegos</h2>
+            <p>Crea tus propias aventuras con pruebas, pistas y desafíos</p>
+            <a href="designer.html" class="btn">Abrir Diseñador</a>
+        </div>
+        
+        <div class="app-card">
+            <div class="app-icon">
+                <i class="fas fa-map-marked-alt"></i>
+            </div>
+            <h2>Aplicación de Juego</h2>
+            <p>Juega con amigos y familiares los juegos que has creado</p>
+            <a href="player.html" class="btn secondary-btn">Jugar Ahora</a>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <i class="fas fa-map-marker-alt"></i>
+                <h3>Geolocalización</h3>
+                <p>Usa el GPS de tu dispositivo para crear y resolver pruebas en el mundo real</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-images"></i>
+                <h3>Multimedia</h3>
+                <p>Añade imágenes y sonidos a tus pruebas y narrativas</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-users"></i>
+                <h3>Multijugador</h3>
+                <p>Juega simultáneamente con múltiples personas y compite en clasificaciones</p>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Clon de Actionbound - Usa GitHub Pages para desplegar tu aplicación</p>
+    </footer>
+</body>
+</html>

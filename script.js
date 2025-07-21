@@ -1,6 +1,21 @@
+// 
+if (window.location.pathname.endsWith('index.html') || 
+    window.location.pathname === '/') {
+    // No hacer nada, ya estamos en la página principal
+} else if (window.location.pathname.endsWith('designer.html')) {
+    // Código para designer.html
+    document.addEventListener('DOMContentLoaded', initMap);
+} else if (window.location.pathname.endsWith('player.html')) {
+    // Código para player.html
+    document.addEventListener('DOMContentLoaded', function() {
+        initMap();
+        initGeolocation();
+    });
+}
+
 // Configuración de Supabase
-const supabaseUrl = 'TU_URL_DEL_PROYECTO';
-const supabaseKey = 'TU_API_KEY';
+const supabaseUrl = 'https://uxyilkaoapjndmrzvmss.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eWlsa2FvYXBqbmRtcnp2bXNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwOTYyODQsImV4cCI6MjA2ODY3MjI4NH0.vt-puG5IeLfHiteXYHztWkTg99J55WjMSPD0CWkSCgE';
 const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
 // Variables globales
