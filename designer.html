@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Creador de Juegos</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Creador de Juegos de Búsqueda del Tesoro</h1>
+        
+        <!-- Formulario de Juego -->
+        <div class="card">
+            <h2>Nuevo Juego</h2>
+            <input type="text" id="gameName" placeholder="Nombre del juego">
+            <textarea id="gameDesc" placeholder="Descripción del juego (max 100 palabras)"></textarea>
+            <button onclick="createGame()">Crear Juego</button>
+        </div>
+
+        <!-- Formulario de Pruebas -->
+        <div class="card" id="taskForm" style="display: none;">
+            <h2>Agregar Prueba</h2>
+            <select id="taskType">
+                <option value="location">Prueba de Ubicación</option>
+                <option value="qr">Código QR</option>
+                <option value="multiple_choice">Pregunta Múltiple</option>
+            </select>
+            
+            <input type="text" id="taskQuestion" placeholder="Enunciado de la prueba">
+            <textarea id="taskNarrative" placeholder="Narrativa (max 100 palabras)"></textarea>
+            
+            <div id="locationInputs">
+                <p>Selecciona la ubicación en el mapa</p>
+            </div>
+            
+            <div id="mediaUpload">
+                <p>Subir media:</p>
+                <input type="file" id="mediaFile" accept="image/*, audio/*">
+            </div>
+
+            <div id="answerInputs">
+                <input type="text" id="correctAnswer" placeholder="Respuesta correcta">
+            </div>
+
+            <h3>Pistas (max 3)</h1>
+            <div id="cluesContainer">
+                <div class="clue">
+                    <input type="text" placeholder="Pista 1" class="clue-text">
+                    <input type="number" placeholder="Penalización" class="clue-penalty" min="1">
+                </div>
+            </div>
+            
+            <button onclick="addClue()">+ Añadir Pista</button>
+            <button onclick="saveTask()">Guardar Prueba</button>
+        </div>
+    </div>
+
+    <div id="map" style="height: 400px; margin: 20px 0;"></div>
+
+    <div class="auth-container">
+    <button onclick="signIn()">Iniciar Sesión</button>
+    <button onclick="signUp()">Registrarse</button>
+</div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.0.0/dist/umd/supabase.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

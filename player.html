@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🗺️ Búsqueda del Tesoro</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="game-container">
+        <header>
+            <div class="header-top">
+                <span id="gameTitle">Nombre del Juego</span>
+                <div class="player-info">
+                    <i class="fas fa-user"></i>
+                    <span id="playerName">Jugador</span>
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="stat">
+                    <i class="fas fa-clock"></i>
+                    <span id="timer">00:00</span>
+                </div>
+                <div class="stat">
+                    <i class="fas fa-star"></i>
+                    <span id="score">0</span> pts
+                </div>
+                <div class="stat">
+                    <i class="fas fa-tasks"></i>
+                    <span id="completedTasks">0/0</span>
+                </div>
+            </div>
+        </header>
+
+        <div id="map"></div>
+
+        <div class="task-panel" id="taskPanel">
+            <div class="task-content">
+                <h2 id="taskTitle">Prueba 1</h2>
+                <p id="taskNarrative">Narrativa de la prueba...</p>
+                
+                <div id="mediaContainer">
+                    <!-- Aquí se cargará el media -->
+                </div>
+
+                <div id="answerForm">
+                    <input type="text" id="answerInput" placeholder="Tu respuesta">
+                    <div class="clues-container">
+                        <button onclick="showClue(1)" class="clue-btn">Pista 1</button>
+                        <button onclick="showClue(2)" class="clue-btn">Pista 2</button>
+                        <button onclick="showClue(3)" class="clue-btn">Pista 3</button>
+                    </div>
+                    <button onclick="submitAnswer()" class="submit-btn">Enviar</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button onclick="startGame()" id="startButton">Iniciar Juego</button>
+            <button onclick="showLeaderboard()" id="leaderboardButton">Clasificación</button>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.0.0/dist/umd/supabase.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
