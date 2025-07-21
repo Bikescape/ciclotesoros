@@ -1,7 +1,8 @@
-// Configuración de Supabase
+
+// Configuración de Supabase (CORREGIDO)
 const supabaseUrl = 'https://uxyilkaoapjndmrzvmss.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eWlsa2FvYXBqbmRtcnp2bXNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwOTYyODQsImV4cCI6MjA2ODY3MjI4NH0.vt-puG5IeLfHiteXYHztWkTg99J55WjMSPD0CWkSCgE';
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey); // ¡Nombre de variable cambiado!
 
 // Variables globales
 let currentGameId = null;
@@ -85,12 +86,12 @@ function handleError(error) {
     alert('No se pudo obtener tu ubicación. Asegúrate de permitir el acceso a la ubicación.');
 }
 
-// Sistema de autenticación
+// Sistema de autenticación (CORREGIDO)
 async function signIn() {
     const email = prompt('Email:');
     const password = prompt('Contraseña:');
     
-    const { error } = await supabase.auth.signIn({ email, password });
+    const { error } = await supabaseClient.auth.signIn({ email, password }); // ¡Usar supabaseClient!
     if(!error) location.reload();
 }
 
@@ -98,18 +99,18 @@ async function signUp() {
     const email = prompt('Email:');
     const password = prompt('Contraseña:');
     
-    const { error } = await supabase.auth.signUp({ email, password });
+    const { error } = await supabaseClient.auth.signUp({ email, password }); // ¡Usar supabaseClient!
     if(!error) alert('Revisa tu email para confirmar');
 }
 
 async function signOut() {
-    const { error } = await supabase.auth.signOut();
+    const { error } = await supabaseClient.auth.signOut(); // ¡Usar supabaseClient!
     if(!error) location.reload();
 }
 
 // Cargar información del usuario
 async function loadUserInfo() {
-    const { data: userData } = await supabase.auth.getUser();
+    const { data: userData } = await supabaseClient.auth.getUser(); // ¡Usar supabaseClient!
     const userInfo = document.getElementById('userInfo');
     
     if (userData.user) {
@@ -122,11 +123,11 @@ async function loadUserInfo() {
     }
 }
 
-// Cargar lista de juegos
+// Cargar lista de juegos (CORREGIDO)
 async function loadGames() {
     try {
         // Obtener usuario actual
-        const { data: userData } = await supabase.auth.getUser();
+        const { data: userData } = await supabaseClient.auth.getUser(); // ¡Usar supabaseClient!
         if (!userData.user) {
             document.getElementById('gamesList').innerHTML = `
                 <p>Debes iniciar sesión para ver tus juegos</p>
@@ -139,7 +140,7 @@ async function loadGames() {
         document.getElementById('gamesList').innerHTML = '<div class="loading">Cargando juegos...</div>';
         
         // Cargar juegos del usuario
-        const { data: games, error } = await supabase
+        const { data: games, error } = await supabaseClient
             .from('games')
             .select('*')
             .eq('user_id', userData.user.id)
@@ -176,7 +177,7 @@ async function loadGames() {
     }
 }
 
-// Iniciar un juego
+// Iniciar un juego (CORREGIDO)
 async function startGame(gameId) {
     currentGameId = gameId;
     
@@ -185,7 +186,7 @@ async function startGame(gameId) {
     document.getElementById('gameInterface').style.display = 'block';
     
     // Cargar datos del juego
-    const { data: game } = await supabase
+    const { data: game } = await supabaseClient
         .from('games')
         .select('*')
         .eq('id', gameId)
@@ -196,7 +197,7 @@ async function startGame(gameId) {
     }
     
     // Cargar tareas del juego
-    const { data: tasks } = await supabase
+    const { data: tasks } = await supabaseClient
         .from('tasks')
         .select('*')
         .eq('game_id', gameId)
@@ -312,9 +313,9 @@ function showError(message) {
     alert(message);
 }
 
-// Suscripción a cambios en tiempo real
+// Suscripción a cambios en tiempo real (CORREGIDO)
 function setupRealtime() {
-    supabase
+    supabaseClient
         .channel('tasks')
         .on('postgres_changes', 
             { 
