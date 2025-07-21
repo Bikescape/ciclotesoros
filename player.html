@@ -16,6 +16,7 @@
                 <div class="player-info">
                     <i class="fas fa-user"></i>
                     <span id="playerName">Jugador</span>
+                    <button onclick="signOut()" class="btn-small">Salir</button>
                 </div>
             </div>
             <div class="header-stats">
@@ -34,25 +35,34 @@
             </div>
         </header>
 
-        <div id="map"></div>
+        <!-- Lista de juegos -->
+        <div class="games-list" id="gamesList">
+            <h2>Mis Juegos</h2>
+            <div class="loading">Cargando juegos...</div>
+        </div>
 
-        <div class="task-panel" id="taskPanel">
-            <div class="task-content">
-                <h2 id="taskTitle">Prueba 1</h2>
-                <p id="taskNarrative">Narrativa de la prueba...</p>
-                
-                <div id="mediaContainer">
-                    <!-- Aquí se cargará el media -->
-                </div>
-
-                <div id="answerForm">
-                    <input type="text" id="answerInput" placeholder="Tu respuesta">
-                    <div class="clues-container">
-                        <button onclick="showClue(1)" class="clue-btn">Pista 1</button>
-                        <button onclick="showClue(2)" class="clue-btn">Pista 2</button>
-                        <button onclick="showClue(3)" class="clue-btn">Pista 3</button>
+        <!-- Interfaz de juego -->
+        <div id="gameInterface" style="display: none;">
+            <div id="map"></div>
+            
+            <div class="task-panel" id="taskPanel">
+                <div class="task-content">
+                    <h2 id="taskTitle">Prueba 1</h2>
+                    <p id="taskNarrative">Narrativa de la prueba...</p>
+                    
+                    <div id="mediaContainer">
+                        <!-- Aquí se cargará el media -->
                     </div>
-                    <button onclick="submitAnswer()" class="submit-btn">Enviar</button>
+
+                    <div id="answerForm">
+                        <input type="text" id="answerInput" placeholder="Tu respuesta">
+                        <div class="clues-container">
+                            <button onclick="showClue(1)" class="clue-btn">Pista 1</button>
+                            <button onclick="showClue(2)" class="clue-btn">Pista 2</button>
+                            <button onclick="showClue(3)" class="clue-btn">Pista 3</button>
+                        </div>
+                        <button onclick="submitAnswer()" class="submit-btn">Enviar</button>
+                    </div>
                 </div>
             </div>
         </div>

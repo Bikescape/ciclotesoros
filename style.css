@@ -2,6 +2,7 @@
     --primary: #FF6B6B;
     --secondary: #4ECDC4;
     --accent: #FFD166;
+    --text: #2D3142;
 }
 
 body {
@@ -58,6 +59,111 @@ button:hover {
     margin: 10px 0;
 }
 
+/* Estilos para player.html */
+.game-container {
+    height: 100vh;
+    display: grid;
+    grid-template-rows: 60px 1fr 80px;
+}
+
+.header {
+    background: var(--primary);
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.player-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#playerName {
+    margin-right: 10px;
+}
+
+.header-stats {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+    background: rgba(255,255,255,0.1);
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.task-panel {
+    background: white;
+    padding: 20px;
+    border-radius: 15px 15px 0 0;
+    margin: 10px;
+}
+
+.task-content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.task-content p {
+    line-height: 1.6;
+}
+
+#mediaContainer {
+    text-align: center;
+    margin: 20px 0;
+}
+
+#mediaContainer img {
+    max-width: 100%;
+    border-radius: 10px;
+}
+
+#mediaContainer audio {
+    width: 100%;
+}
+
+.clues-container {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.clue-btn {
+    background: #FFD166;
+    color: #2D3142;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9em;
+}
+
+.submit-btn {
+    background: var(--secondary);
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 1.1em;
+    margin-top: 15px;
+}
+
+.controls {
+    background: var(--secondary);
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+/* Estilos responsivos */
 @media (max-width: 768px) {
     .game-container {
         grid-template-rows: 50px 1fr 60px;
@@ -71,4 +177,80 @@ button:hover {
         padding: 8px 12px;
         font-size: 0.9em;
     }
+    
+    .clue {
+        grid-template-columns: 2fr 1fr;
+    }
+}
+
+/* Estilos para la página de inicio */
+.app-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    padding: 30px;
+    margin: 20px 0;
+    transition: transform 0.3s ease;
+}
+
+.app-card:hover {
+    transform: translateY(-5px);
+}
+
+.app-icon {
+    font-size: 3em;
+    color: #4ECDC4;
+    margin-bottom: 15px;
+}
+
+.btn {
+    background: #FF6B6B;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 30px;
+    text-decoration: none;
+    display: inline-block;
+    margin: 10px;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.btn:hover {
+    background: #E74C3C;
+}
+
+.secondary-btn {
+    background: #4ECDC4;
+}
+
+.secondary-btn:hover {
+    background: #2AAFA9;
+}
+
+.features {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.feature {
+    flex: 1 1 200px;
+    padding: 15px;
+    margin: 10px;
+    background: rgba(255,255,255,0.8);
+    border-radius: 10px;
+}
+
+.loading {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
+
+.btn-small {
+    padding: 5px 10px;
+    font-size: 0.8em;
+    background: rgba(255,255,255,0.2);
+    border-radius: 15px;
 }

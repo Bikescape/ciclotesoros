@@ -6,17 +6,27 @@
     <title>Creador de Juegos</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
         <h1>🎮 Creador de Juegos de Búsqueda del Tesoro</h1>
         
+        <!-- Autenticación -->
+        <div class="card auth-container">
+            <h2>Tu Cuenta</h2>
+            <div id="userInfo">Cargando...</div>
+            <button onclick="signIn()" class="btn">Iniciar Sesión</button>
+            <button onclick="signUp()" class="btn secondary-btn">Registrarse</button>
+            <button onclick="signOut()" class="btn" style="background: #666;">Cerrar Sesión</button>
+        </div>
+
         <!-- Formulario de Juego -->
         <div class="card">
             <h2>Nuevo Juego</h2>
             <input type="text" id="gameName" placeholder="Nombre del juego">
             <textarea id="gameDesc" placeholder="Descripción del juego (max 100 palabras)"></textarea>
-            <button onclick="createGame()">Crear Juego</button>
+            <button onclick="createGame()" class="btn">Crear Juego</button>
         </div>
 
         <!-- Formulario de Pruebas -->
@@ -44,7 +54,7 @@
                 <input type="text" id="correctAnswer" placeholder="Respuesta correcta">
             </div>
 
-            <h3>Pistas (max 3)</h1>
+            <h3>Pistas (max 3)</h3>
             <div id="cluesContainer">
                 <div class="clue">
                     <input type="text" placeholder="Pista 1" class="clue-text">
@@ -52,17 +62,12 @@
                 </div>
             </div>
             
-            <button onclick="addClue()">+ Añadir Pista</button>
-            <button onclick="saveTask()">Guardar Prueba</button>
+            <button onclick="addClue()" class="btn">+ Añadir Pista</button>
+            <button onclick="saveTask()" class="btn secondary-btn">Guardar Prueba</button>
         </div>
     </div>
 
     <div id="map" style="height: 400px; margin: 20px 0;"></div>
-
-    <div class="auth-container">
-    <button onclick="signIn()">Iniciar Sesión</button>
-    <button onclick="signUp()">Registrarse</button>
-</div>
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.0.0/dist/umd/supabase.min.js"></script>

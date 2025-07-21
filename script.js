@@ -1,18 +1,3 @@
-// 
-if (window.location.pathname.endsWith('index.html') || 
-    window.location.pathname === '/') {
-    // No hacer nada, ya estamos en la página principal
-} else if (window.location.pathname.endsWith('designer.html')) {
-    // Código para designer.html
-    document.addEventListener('DOMContentLoaded', initMap);
-} else if (window.location.pathname.endsWith('player.html')) {
-    // Código para player.html
-    document.addEventListener('DOMContentLoaded', function() {
-        initMap();
-        initGeolocation();
-    });
-}
-
 // Configuración de Supabase
 const supabaseUrl = 'https://uxyilkaoapjndmrzvmss.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eWlsa2FvYXBqbmRtcnp2bXNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwOTYyODQsImV4cCI6MjA2ODY3MjI4NH0.vt-puG5IeLfHiteXYHztWkTg99J55WjMSPD0CWkSCgE';
@@ -23,6 +8,13 @@ let currentGameId = null;
 let currentTaskId = null;
 let map;
 let currentMarker = null;
+let gameState = {
+    currentTask: 0,
+    score: 0,
+    startTime: null,
+    tasks: [],
+    cluesUsed: []
+};
 
 // Inicializar el mapa
 function initMap() {
@@ -40,102 +32,6 @@ function initMap() {
         }
     });
 }
-
-// Iniciar cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', initMap);
-
-async function createGame() {
-    const gameName = document.getElementById('gameName').value;
-    const gameDesc = document.getElementById('gameDesc').value;
-    
-    // Obtener usuario actual (necesitarás implementar login)
-    const user = await supabase.auth.getUser();
-    
-    const { data, error } = await supabase
-        .from('games')
-        .insert({
-            name: gameName,
-            description: gameDesc,
-            user_id: user.data.user.id
-        })
-        .select()
-        .single();
-    
-    if(!error) {
-        currentGameId = data.id;
-        alert('Juego creado! ID: ' + currentGameId);
-        document.getElementById('taskForm').style.display = 'block';
-    }
-}
-
-function addClue() {
-    const container = document.getElementById('cluesContainer');
-    const newClue = document.createElement('div');
-    newClue.className = 'clue';
-    newClue.innerHTML = `
-        <input type="text" placeholder="Pista ${container.children.length + 1}" class="clue-text">
-        <input type="number" placeholder="Penalización" class="clue-penalty" min="1">
-    `;
-    container.appendChild(newClue);
-}
-
-async function saveTask() {
-    // Recolectar datos del formulario
-    const taskData = {
-        game_id: currentGameId,
-        type: document.getElementById('taskType').value,
-        question: document.getElementById('taskQuestion').value,
-        correct_answer: document.getElementById('correctAnswer').value,
-        media_url: await uploadMedia()
-    };
-
-    // Guardar en Supabase
-    const { data, error } = await supabase
-        .from('tasks')
-        .insert(taskData)
-        .select()
-        .single();
-    
-    if(!error) {
-        currentTaskId = data.id;
-        saveClues(currentTaskId);
-        alert('Prueba guardada!');
-    }
-}
-
-async function uploadMedia() {
-    const file = document.getElementById('mediaFile').files[0];
-    if(!file) return null;
-    
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Date.now()}.${fileExt}`;
-    
-    const { data, error } = await supabase.storage
-        .from('game-media')
-        .upload(fileName, file);
-    
-    return data?.path ? `https://tu-proyecto.supabase.co/storage/v1/object/public/game-media/${fileName}` : null;
-}
-
-async function saveClues(taskId) {
-    const clues = Array.from(document.querySelectorAll('.clue')).map(clue => ({
-        task_id: taskId,
-        clue_number: Array.from(clue.parentNode.children).indexOf(clue) + 1,
-        clue_text: clue.querySelector('.clue-text').value,
-        penalty: parseInt(clue.querySelector('.clue-penalty').value || 0)
-    }));
-    
-    await supabase.from('clues').insert(clues);
-}
-
-// Variables de juego
-let gameState = {
-    currentTask: 0,
-    score: 0,
-    startTime: null,
-    tasks: [],
-    cluesUsed: []
-};
 
 // Inicializar geolocalización
 function initGeolocation() {
@@ -170,11 +66,124 @@ async function checkProximity(lat, lng) {
 
 function haversine(lat1, lon1, lat2, lon2) {
     // Implementación del algoritmo de Haversine
-    // ...
+    const R = 6371e3; // Radio de la Tierra en metros
+    const φ1 = lat1 * Math.PI/180;
+    const φ2 = lat2 * Math.PI/180;
+    const Δφ = (lat2-lat1) * Math.PI/180;
+    const Δλ = (lon2-lon1) * Math.PI/180;
+
+    const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ/2) * Math.sin(Δλ/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    return R * c;
 }
 
-// Sistema de tareas
-async function loadGame(gameId) {
+function handleError(error) {
+    console.error('Error de geolocalización:', error);
+    alert('No se pudo obtener tu ubicación. Asegúrate de permitir el acceso a la ubicación.');
+}
+
+// Sistema de autenticación
+async function signIn() {
+    const email = prompt('Email:');
+    const password = prompt('Contraseña:');
+    
+    const { error } = await supabase.auth.signIn({ email, password });
+    if(!error) location.reload();
+}
+
+async function signUp() {
+    const email = prompt('Email:');
+    const password = prompt('Contraseña:');
+    
+    const { error } = await supabase.auth.signUp({ email, password });
+    if(!error) alert('Revisa tu email para confirmar');
+}
+
+async function signOut() {
+    const { error } = await supabase.auth.signOut();
+    if(!error) location.reload();
+}
+
+// Cargar información del usuario
+async function loadUserInfo() {
+    const { data: userData } = await supabase.auth.getUser();
+    const userInfo = document.getElementById('userInfo');
+    
+    if (userData.user) {
+        userInfo.innerHTML = `
+            <p>Hola, ${userData.user.email}</p>
+            <p>ID: ${userData.user.id}</p>
+        `;
+    } else {
+        userInfo.innerHTML = '<p>No has iniciado sesión</p>';
+    }
+}
+
+// Cargar lista de juegos
+async function loadGames() {
+    try {
+        // Obtener usuario actual
+        const { data: userData } = await supabase.auth.getUser();
+        if (!userData.user) {
+            document.getElementById('gamesList').innerHTML = `
+                <p>Debes iniciar sesión para ver tus juegos</p>
+                <button onclick="signIn()" class="btn">Iniciar Sesión</button>
+            `;
+            return;
+        }
+        
+        // Mostrar estado de carga
+        document.getElementById('gamesList').innerHTML = '<div class="loading">Cargando juegos...</div>';
+        
+        // Cargar juegos del usuario
+        const { data: games, error } = await supabase
+            .from('games')
+            .select('*')
+            .eq('user_id', userData.user.id)
+            .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        
+        // Mostrar juegos en la interfaz
+        const gamesList = document.getElementById('gamesList');
+        if (games && games.length > 0) {
+            let html = '<h2>Mis Juegos</h2>';
+            games.forEach(game => {
+                html += `
+                    <div class="game-card">
+                        <h3>${game.name}</h3>
+                        <p>${game.description || 'Sin descripción'}</p>
+                        <button onclick="startGame('${game.id}')" class="btn">Jugar</button>
+                    </div>
+                `;
+            });
+            gamesList.innerHTML = html;
+        } else {
+            gamesList.innerHTML = `
+                <p>No tienes juegos creados. Ve al Diseñador para crear uno.</p>
+                <a href="designer.html" class="btn">Ir al Diseñador</a>
+            `;
+        }
+    } catch (error) {
+        console.error('Error cargando juegos:', error);
+        document.getElementById('gamesList').innerHTML = `
+            <p>Error al cargar los juegos: ${error.message}</p>
+            <button onclick="loadGames()" class="btn">Reintentar</button>
+        `;
+    }
+}
+
+// Iniciar un juego
+async function startGame(gameId) {
+    currentGameId = gameId;
+    
+    // Ocultar lista de juegos y mostrar interfaz de juego
+    document.getElementById('gamesList').style.display = 'none';
+    document.getElementById('gameInterface').style.display = 'block';
+    
     // Cargar datos del juego
     const { data: game } = await supabase
         .from('games')
@@ -182,20 +191,31 @@ async function loadGame(gameId) {
         .eq('id', gameId)
         .single();
     
-    document.getElementById('gameTitle').textContent = game.name;
+    if (game) {
+        document.getElementById('gameTitle').textContent = game.name;
+    }
     
-    // Cargar tareas
+    // Cargar tareas del juego
     const { data: tasks } = await supabase
         .from('tasks')
-        .select(`
-            *,
-            clues(*)
-        `)
+        .select('*')
         .eq('game_id', gameId)
         .order('created_at');
     
-    gameState.tasks = tasks;
-    updateTaskPanel();
+    if (tasks) {
+        gameState.tasks = tasks;
+        updateTaskPanel();
+    }
+    
+    // Iniciar el juego
+    startTimer();
+    initGeolocation();
+}
+
+// Función para mostrar la lista de juegos
+function showGamesList() {
+    document.getElementById('gamesList').style.display = 'block';
+    document.getElementById('gameInterface').style.display = 'none';
 }
 
 // Sistema de tiempo
@@ -209,7 +229,42 @@ function startTimer() {
     }, 1000);
 }
 
-// Validación de respuestas
+// Actualizar panel de tarea
+function updateTaskPanel() {
+    const task = gameState.tasks[gameState.currentTask];
+    if (!task) return;
+    
+    document.getElementById('taskTitle').textContent = `Prueba ${gameState.currentTask + 1}`;
+    document.getElementById('taskNarrative').textContent = task.question;
+    
+    // Cargar media
+    if (task.media_url) {
+        const mediaContainer = document.getElementById('mediaContainer');
+        if (task.media_url.includes('.jpg') || task.media_url.includes('.png')) {
+            mediaContainer.innerHTML = `<img src="${task.media_url}" alt="Imagen de la prueba">`;
+        } else if (task.media_url.includes('.mp3') || task.media_url.includes('.wav')) {
+            mediaContainer.innerHTML = `<audio controls src="${task.media_url}"></audio>`;
+        }
+    }
+    
+    // Limpiar input de respuesta
+    document.getElementById('answerInput').value = '';
+}
+
+// Mostrar pista
+function showClue(clueNumber) {
+    const task = gameState.tasks[gameState.currentTask];
+    const clue = task.clues.find(c => c.clue_number === clueNumber);
+    
+    if (clue) {
+        alert(`Pista ${clueNumber}: ${clue.clue_text}`);
+        // Aplicar penalización
+        gameState.score -= clue.penalty;
+        document.getElementById('score').textContent = gameState.score;
+    }
+}
+
+// Validar respuesta
 async function submitAnswer() {
     const answer = document.getElementById('answerInput').value;
     const task = gameState.tasks[gameState.currentTask];
@@ -227,6 +282,7 @@ async function submitAnswer() {
             break;
         case 'qr':
             // Validación por código QR (usando biblioteca jsQR)
+            // Aquí iría la lógica para escanear QR
             break;
     }
     
@@ -237,25 +293,27 @@ async function submitAnswer() {
     }
 }
 
-async function signIn() {
-    const email = prompt('Email:');
-    const password = prompt('Contraseña:');
+function showTaskSuccess() {
+    gameState.score += 100 - (Date.now() - gameState.startTime)/1000;
+    document.getElementById('score').textContent = Math.round(gameState.score);
     
-    const { error } = await supabase.auth.signIn({ email, password });
-    if(!error) location.reload();
+    // Avanzar a la siguiente tarea
+    gameState.currentTask++;
+    if (gameState.currentTask < gameState.tasks.length) {
+        updateTaskPanel();
+    } else {
+        // Juego completado
+        alert(`¡Juego completado! Puntuación final: ${Math.round(gameState.score)}`);
+        showGamesList();
+    }
 }
 
-async function signUp() {
-    const email = prompt('Email:');
-    const password = prompt('Contraseña:');
-    
-    const { error } = await supabase.auth.signUp({ email, password });
-    if(!error) alert('Revisa tu email para confirmar');
+function showError(message) {
+    alert(message);
 }
 
 // Suscripción a cambios en tiempo real
 function setupRealtime() {
-    // Suscripción a cambios en tareas
     supabase
         .channel('tasks')
         .on('postgres_changes', 
@@ -272,31 +330,33 @@ function setupRealtime() {
         )
         .subscribe();
 }
-// Compartir ubicación en tiempo real
-function shareLocation(lat, lng) {
-    supabase
-        .from('player_positions')
-        .insert({
-            game_id: currentGameId,
-            user_id: currentUser.id,
-            lat,
-            lng
-        });
+
+function updateTaskState(task) {
+    // Actualizar la tarea en el estado del juego
+    const index = gameState.tasks.findIndex(t => t.id === task.id);
+    if (index !== -1) {
+        gameState.tasks[index] = task;
+    }
 }
 
-// Mostrar posiciones de otros jugadores
-function updatePlayerMarkers() {
-    supabase
-        .from('player_positions')
-        .select('*')
-        .eq('game_id', currentGameId)
-        .then(({ data }) => {
-            data.forEach(player => {
-                L.marker([player.lat, player.lng])
-                    .bindPopup(player.user_id)
-                    .addTo(map);
-            });
-        });
+// Función para mostrar la clasificación
+function showLeaderboard() {
+    // Implementar sistema de clasificación
+    alert('Clasificación (proximamente)');
 }
 
-const supabase = supabase.createClient(ENV.SUPABASE_URL, ENV.SUPABASE_KEY);
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    // Detectar en qué página estamos
+    if (window.location.pathname.endsWith('index.html') || 
+        window.location.pathname === '/') {
+        // Ya está en index.html
+    } else if (window.location.pathname.endsWith('designer.html')) {
+        initMap();
+        loadUserInfo();
+    } else if (window.location.pathname.endsWith('player.html')) {
+        initMap();
+        initGeolocation();
+        loadGames();
+    }
+});
